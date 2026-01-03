@@ -1,0 +1,23 @@
+GSM COMMUNICATION :
+le gsm vas envoyer un msg fire vers telephone lorsque le capteur de flamme capter un signal
+le gsm vas envoyer un msg light vers telephone lorsque le capteur de lumiere TEMT6000 capter un signal
+le gsm vas envoyer un msg gaz vers telephone lorsque le capteur de gaz MQ-2 capter un signal
+le gsm vas envoyer un msg sound vers telephone lorsque le capteur de son capter un signal
+le gsm vas envoyer un msg mouvement vers telephone lorsque le capteur de mouvement HC-SR505 capter un signal
+ larduino et controle par une application mobile qui est connecté par Bluetooth hc-05
+lorsque les capteurs capter un signal le buzzer vas sonner
+-si lapplication envoyer code 1 capteur de son s'allumera 
+-si lapplication envoyer code 2 capteur de son s'eteindre 
+-si lapplication envoyer code 3 capteur de mouvement s'allumera 
+-si lapplication envoyer code 4 capteur de mouvement s'eteindre 
+-si lapplication envoyer code 5 capteur de gsm s'allumera 
+-si lapplication envoyer code 6 capteur de gsm s'eteindre 
+-si lapplication envoyer code 7 capteur de lumiere s'allumera 
+-si lapplication envoyer code 8 capteur de lumiere s'eteindre 
+-Module Bluetooth HC-05 : txd 8,rxd 9 
+-Capteur de mouvement HC-SR505 : pin 11 
+-Capteur de flamme : digital 5; analog A1 
+-Capteur de lumière TEMT6000: pin 4 
+-Capteur de son KY-038 : 7 
+-Capteur de gaz MQ-2 : analog A0 ;digital 6 
+-GSM 800L : txd 3,rxd 2
