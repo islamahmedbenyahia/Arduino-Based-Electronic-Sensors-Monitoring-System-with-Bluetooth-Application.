@@ -1,0 +1,227 @@
+// Inclure la bibliothèque SoftwareSerial pour utiliser le port série logiciel
+#include <SoftwareSerial.h>
+
+// Définir les broches pour le module Bluetooth HC-05
+#define BT_TX 8
+#define BT_RX 9
+
+// Définir les broches pour les capteurs
+#define MOUVEMENT_PIN 11
+#define FLAMME_PIN 5
+#define FLAMME_ANALOG A1
+#define LUMIERE_PIN 4
+#define SON_PIN 7
+#define GAZ_PIN 6
+#define GAZ_ANALOG A0
+#define GSM_TX 3
+#define GSM_RX 2
+
+// Définir la broche pour le buzzer
+#define BUZZER_PIN 10
+
+// Déclarer une variable pour stocker le code reçu
+int code = 0;
+
+// Créer un objet SoftwareSerial pour communiquer avec le module Bluetooth HC-05
+SoftwareSerial BTSerial(BT_TX, BT_RX);
+
+// Créer un objet SoftwareSerial pour communiquer avec le module GSM 800L
+SoftwareSerial GSMSerial(GSM_TX, GSM_RX);
+
+// Définir le numéro de téléphone à contacter en cas d'alerte
+String phone_number = "+213xxxxxxxxx";
+
+void setup() {
+  // Initialiser la communication série avec le moniteur série
+  Serial.begin(9600);
+
+  // Initialiser la communication série avec le module Bluetooth HC-05
+  BTSerial.begin(9600);
+
+  // Initialiser la communication série avec le module GSM 800L
+  GSMSerial.begin(9600);
+
+  // Initialiser les broches comme sorties ou entrées selon le cas
+  pinMode(MOUVEMENT_PIN, OUTPUT);
+  pinMode(FLAMME_PIN, OUTPUT);
+  pinMode(LUMIERE_PIN, OUTPUT);
+  pinMode(SON_PIN, OUTPUT);
+  pinMode(GAZ_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+
+  // Attendre que le module GSM soit prêt
+  delay(5000);
+
+  // Envoyer la commande AT au module GSM pour vérifier la connexion
+  GSMSerial.println("AT");
+  
+  // Attendre la réponse du module GSM
+  delay(1000);
+
+  // Lire la réponse du module GSM et l'afficher sur le moniteur série
+  while (GSMSerial.available() > 0) {
+    Serial.write(GSMSerial.read());
+  }
+}
+
+void loop() {
+  // Vérifier si des données sont disponibles sur le port série logiciel du module Bluetooth HC-05
+  if (BTSerial.available() > 0) {
+    // Lire le code envoyé par l'application
+    code = BTSerial.read();
+
+    // Effectuer l'action correspondante selon le code
+    switch (code) {
+      case '1':
+        // Allumer le capteur de son
+        digitalWrite(SON_PIN, HIGH);
+        break;
+      case '2':
+        // Éteindre le capteur de son
+        digitalWrite(SON_PIN, LOW);
+        break;
+      case '3':
+        // Allumer le capteur de mouvement
+        digitalWrite(MOUVEMENT_PIN, HIGH);
+        break;
+      case '4':
+        // Éteindre le capteur de mouvement
+        digitalWrite(MOUVEMENT_PIN, LOW);
+        break;
+      case '5':
+        // Allumer le capteur de GSM
+        digitalWrite(GSM_TX, HIGH);
+        digitalWrite(GSM_RX, HIGH);
+        break;
+      case '6':
+        // Éteindre le capteur de GSM
+        digitalWrite(GSM_TX, LOW);
+        digitalWrite(GSM_RX, LOW);
+        break;
+      case '7':
+        // Allumer le capteur de lumière
+        digitalWrite(LUMIERE_PIN, HIGH);
+        break;
+      case '8':
+        // Éteindre le capteur de lumière
+        digitalWrite(LUMIERE_PIN, LOW);
+        break;
+      default:
+        // Code invalide ou non reconnu
+        break;
+    }
+  }
+
+  // Vérifier si un signal est détecté par un des capteurs activés et faire sonner le buzzer si oui
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <SoftwareSerial.h>    // Inclure la bibliothèque pour la communication Bluetooth
+
+// Définir les broches pour les capteurs
+#define FLAME_SENSOR_D 5
+#define FLAME_SENSOR_A A1
+#define LIGHT_SENSOR 4
+#define SOUND_SENSOR 7
+#define MOTION_SENSOR 11
+#define GAS_SENSOR_D 6
+#define GAS_SENSOR_A A0
+
+// Définir les broches pour le buzzer et le module GSM
+#define BUZZER_PIN 10
+#define GSM_TX 3
+#define GSM_RX 2
+
+// Initialiser la communication avec le module GSM
+SoftwareSerial gsmSerial(GSM_TX, GSM_RX);
+
+void setup() {
+  // Initialiser les broches pour les capteurs
+  pinMode(FLAME_SENSOR_D, INPUT);
+  pinMode(FLAME_SENSOR_A, INPUT);
+  pinMode(LIGHT_SENSOR, INPUT);
+  pinMode(SOUND_SENSOR, INPUT);
+  pinMode(MOTION_SENSOR, INPUT);
+  pinMode(GAS_SENSOR_D, INPUT);
+  pinMode(GAS_SENSOR_A, INPUT);
+
+  // Initialiser la communication Bluetooth
+  Serial.begin(9600);
+  
+  // Initialiser la communication avec le module GSM
+  gsmSerial.begin(9600);
+  delay(1000);
+  gsmSerial.println("AT+CMGF=1");    // Changer le mode de message en texte
+  delay(1000);
+  gsmSerial.println("AT+CNMI=2,2,0,0,0");    // Activer la réception des messages
+  delay(1000);
+}
+
+void loop() {
+  // Lire les valeurs des capteurs
+  int flameValueD = digitalRead(FLAME_SENSOR_D);
+  int flameValueA = analogRead(FLAME_SENSOR_A);
+  int lightValue = analogRead(LIGHT_SENSOR);
+  int soundValue = analogRead(SOUND_SENSOR);
+  int motionValue = digitalRead(MOTION_SENSOR);
+  int gasValueD = digitalRead(GAS_SENSOR_D);
+  int gasValueA = analogRead(GAS_SENSOR_A);
+
+  // Envoyer un message si un capteur est déclenché
+  if (flameValueD == HIGH || flameValueA > 500) {
+    sendMessage("fire");
+  }
+  if (lightValue > 500) {
+    sendMessage("light");
+  }
+  if (gasValueD == HIGH || gasValueA > 500) {
+    sendMessage("gaz");
+  }
+  if (soundValue > 500) {
+    sendMessage("sound");
+  }
+  if (motionValue == HIGH) {
+    sendMessage("mouvement");
+  }
+
+  // Vérifier si l'application a envoyé un code
+  if (Serial.available() > 0) {
+    int code = Serial.read() - '0';
+    if (code == 1) {
+      digitalWrite(SOUND_SENSOR, HIGH);
+    }
+    else if (code == 2) {
+      digitalWrite(SOUND_SENSOR, LOW);
+    }
+    else if (code == 3) {
+      digitalWrite(MOTION_SENSOR, HIGH);
+    }
+    else if (code == 4) {
+      digitalWrite(MOTION_SENSOR, LOW);
+    }
+    else if (code == 5) {
+      digitalWrite(GAS_SENSOR_D, HIGH);
+    }
+    else if (code == 6) {
+      digitalWrite(GAS_SENSOR_D, LOW);
+    }
+    else if (code == 7) {
+      digitalWrite(LIGHT_SENSOR, HIGH);
+    }
+    else if (code == 8) {
+      digitalWrite(LIGHT_SENSOR, LOW);
+    }
+  }
+  
+  // Faire son
